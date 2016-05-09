@@ -1,1 +1,2 @@
 # CS100 
+*CS 100 is a course created to teach you one simple principle, “develop twice, code once”. The purpose of this course is to teach you to plan out your development before you begin to code. Additionally, this course will teach you common unix based tools, design patterns to help you structure your code in an efficient manner, documentation, coding standards, and current industry terms and methodologies.*
