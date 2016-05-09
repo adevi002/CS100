@@ -10,13 +10,17 @@ input and output, and interface that user I/O with the menu class. This menu has
 commands:
 
 ● Exit the Program
+
     ○ Typing “exit” as a command will exit the program
   
 ● Undo a Command
+
     ○ Typing “undo” will go back to the last command, and can be called until there are no more commands to undo
   
 ● Redo a Command
+
     ○ Typing “redo” will go forward to the next command, and can be called until there are no more commands to redo
 
 ● Do a Calculation
+
     ○ Do a running calculation. This calculation must start with a single number (ex: 3), and after a single number has been input should take an operator followed by a number (ex: + 10). Note that a space is required between the operator and the number.
