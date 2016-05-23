@@ -19,7 +19,7 @@ class Iterator
 		virtual bool is_done() = 0;
 		virtual Base* current() = 0;
 };
-class OperatorIterator : public iterator
+class OperatorIterator : public Iterator
 {
 	public:
 		OperatorIterator(Base* ptr);
@@ -28,6 +28,7 @@ class OperatorIterator : public iterator
 		bool is_done();
 		Base* current();
 };
+
 class UnaryIterator : public Iterator
 {
 	public:
