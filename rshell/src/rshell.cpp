@@ -31,9 +31,7 @@ bool redirection(string left, string right, int flag) // function set by flags d
     trim(right);
     split(tempVector, left, is_any_of(" "));
     for(unsigned int i = 0; i < tempVector.size(); ++i)
-    {
         commandStrings.push_back(const_cast<char*>(tempVector.at(i).c_str()));
-    }
     int childStatus = 0;
     pid_t pid = fork();
     if(pid < 0)
@@ -50,13 +48,9 @@ bool redirection(string left, string right, int flag) // function set by flags d
             exit(1);
         }
         if(close(0) == -1) // close stdin
-        {
             perror("Error closing file");
-        }
         if(dup(open(right.c_str(), O_RDONLY)) < 0) // set file to input
-        {
             perror("Error with dup");
-        }
         char **command = &commandStrings[0];
         if(execvp(command[0], command) < 0) // execute command
         {
@@ -122,19 +116,13 @@ bool redirection(string left, string right, int flag) // function set by flags d
     {
         wait(&childStatus);
         if(wait(&childStatus) != -1) // if waiting for child does not success an error is thrown out
-        {
             perror("wait error");
-        }
         if(WIFEXITED(childStatus))
         {
             if(WEXITSTATUS(childStatus) != 0) //program ffailed but exited normally
-            {
                 return false;
-            }
             else // program succeeded
-            {
                 return true; 
-            }
         }
         else
         {
@@ -147,16 +135,13 @@ bool redirection(string left, string right, int flag) // function set by flags d
 bool pipeCommand(string left, string right) // pipe command
 {
     vector<char*> commandStrings;
-    vector<string> tempVector;
-    vector<string> tempVector2;
+    vector<string> tempVector, tempVector2;
     trim(left);
     trim(right);
     split(tempVector, left, is_any_of(" "));
     split(tempVector2, right, is_any_of(" "));
     for(unsigned int i = 0; i < tempVector.size(); ++i)
-    {
         commandStrings.push_back(const_cast<char*>(tempVector.at(i).c_str()));
-    }
     int fd[2];
     if(pipe(fd) < 0)
     {
@@ -214,9 +199,7 @@ bool pipeCommand(string left, string right) // pipe command
     {
         commandStrings.clear();
         for(unsigned int i = 0; i < tempVector2.size(); ++i)
-        {
             commandStrings.push_back(const_cast<char*>(tempVector2.at(i).c_str()));
-        }
         char **command = &commandStrings[0];
         if(execvp(const_cast<char*>(command[0]), command) < 0)
         {
@@ -242,15 +225,11 @@ bool balancedParentheses(string commandInput)
     for(unsigned int i = 0; i < commandInput.size(); ++i)
     {
         if(commandInput.at(i) == '(' || commandInput.at(i) == '[')
-        {
-            parenthesesStack.push(commandInput.at(i));
-        }
+            parenthesesStack.push(commandInput.at(i))
         else if(commandInput.at(i) == ')' || commandInput.at(i) == ']')
         {
             if(!parenthesesStack.empty())
-            {
                 parenthesesStack.pop();
-            }
             else
             {
                 perror("Unbalanced parentheses or brackets");
@@ -294,13 +273,9 @@ class Test
             bool flag_d = strcmp(flag_2, commandVector.at(0).c_str());
             bool flag_e = strcmp(flag_3, commandVector.at(0).c_str());
             if(flag_f && flag_d && flag_e)
-            {
                 flag = 1;
-            }
             else
-            {
                 commandVector.erase(commandVector.begin());
-            }
             struct stat buffer;
             vector<const char*> comVector;
             comVector.push_back(commandVector.at(0).c_str());
@@ -312,17 +287,11 @@ class Test
             else
             {
                 if(flag)
-                {
                     isFound = true;
-                }
                 else if(flag_f) // check if file is a regular file
-                {
                     (S_ISREG(buffer.st_mode)) ? isFound = true : isFound = false;
-                }
                 else if(flag_d) // check if file is a directory
-                {
                     (S_ISDIR(buffer.st_mode)) ? isFound = true : isFound = false;
-                }
                 else
                 {
                     perror("Incorrect input for test");
@@ -352,26 +321,18 @@ class InOut : public Base
 			while(IO.size() != 0) // parses command into vector and makes checking left and right side of command easier
 			{
                 if(IO.find("<") != string::npos) 
-            	{
                 	index = IO.find("<");
-            	}
             	else if(IO.find(">>") != string::npos)
             	{	
 					index = IO.find(">>");
 					flag = 1;
             	}
 				else if(IO.find('>') != string::npos)
-				{
 					index = IO.find('>');
-				}
             	else if(IO.find("|") != string::npos)
-            	{
                 	index = IO.find("|");
-            	}
             	else
-            	{
             	    index = -1;
-            	}
             	trim(IO);
 				splitTwo(IO, IOVector, index);
 				if(index != -1)
@@ -386,9 +347,7 @@ class InOut : public Base
 				    IO.erase(IO.begin(), IO.begin() + index + 1);
 				}
 				else
-				{
 				    IO.erase(IO.begin(), IO.end());
-				}
 				flag = 0;
 			}
 			while(IOVector.size() != 0)
@@ -397,29 +356,17 @@ class InOut : public Base
 			    IOVector.erase(IOVector.begin());
 			    right = IOVector.at(1);
 			    if(IOVector.at(0) == ">")
-			    {
 			        flag = 2;
-			    }
 			    else if(IOVector.at(0) == "<")
-			    {
 			        flag = 1;
-			    }
 			    else if(IOVector.at(0) == "|")
-			    {
 			        flag = 4;
-			    }
 			    else if(IOVector.at(0) == ">>") 
-			    {
 			        flag = 3;
-			    }
 			    if(flag < 4)
-			    {
 			        inputOutput = redirection(left, right, flag);
-			    }
 			    else
-			    {
 			        inputOutput = pipeCommand(left, right);
-			    }
 			    IOVector.erase(IOVector.begin());
 			    IOVector.erase(IOVector.begin());
 			}
@@ -484,9 +431,7 @@ class Command : public Base // DEBUG TEST
                 {
                     if(commandVector.at(i) == "") {}
                     else
-                    {
                         commandArray.push_back(const_cast<char*>(commandVector.at(i).c_str()));
-                    }
                 }
                 int childStatus = 0;
                 pid_t pid = fork();
@@ -510,19 +455,13 @@ class Command : public Base // DEBUG TEST
                 {
                     wait(&childStatus); //wait until child finishes
                     if(wait(&childStatus) != -1) // if waiting for child does not success an error is thrown out
-                    {
                         perror("wait error");
-                    }
                     if(WIFEXITED(childStatus))
                     {
                         if(WEXITSTATUS(childStatus) != 0) //program ffailed but exited normally
-                        {
                             return false;
-                        }
                         else // program succeeded
-                        {
                             return true; 
-                        }
                     }
                     else
                     {
@@ -544,23 +483,17 @@ class Symbols : public Connector
             if(selector == 1) // ampersand connector flag
             {
                 if(previous) // if previous command executed execute the next command or return false
-                {
                     return current->evaluate();
-                }
                 return false;
             }
             else if(selector == 2) // or connector flag
             {
                 if(!previous) //if previous command did not execute, execute next command
-                {
                     return current->evaluate();
-                }
                 return false; // else return false;
             }
             else if(selector == 3) // semi colon connect flag
-            {
                 return current->evaluate(); // execute command all the time
-            }
             return false;
         }
 };
@@ -580,27 +513,19 @@ class CommandEntered : public Base
             trim(input);
             tempVector.push_back("\0");
             if(input.find("#") != string::npos) // if user inputted a #, everything afterwards is considered command
-            {   
                 input = input.substr(0, input.find("#")); // remove everything from # to end of string
-            }
             if(input.find("(") != string::npos) // check for parentheses and precedence
             {
                 if(!balancedParentheses(input)) // check for balanced parentheses
-                {
                     return false; // else return false and error
-                }
                 while(tempVector.size() != 0) // begin extraction of groups of commands inside parentheses
                 {
                     if(input.find("(") != string::npos)
-                    {
                         split(tempVector, input, is_any_of("() "));
-                    }
                     for(unsigned int i = 0; i < tempVector.size(); ++i)
                     {
                         if(tempVector.at(i) != "")
-                        {
                             commandHolder.push_back(tempVector.at(i));
-                        }
                     }
                     tempVector.clear();
                 }
@@ -615,9 +540,7 @@ class CommandEntered : public Base
             else if(input.find("[") != string::npos)
             {
                 if(!balancedParentheses(input))
-                {
                     return false;
-                }
                 input.replace(input.find('['), input.find('[') + 1, "test ");
                 input.replace(input.find(']'), input.find(']') - 1, "");
                 split(commandHolder, input, is_any_of(" "));
@@ -651,7 +574,7 @@ class CommandEntered : public Base
                         flag = 2;
                         ++j;
                         break;
-                    }
+                 	}
                     commandArray.push_back(commandHolder.at(j));
                 }
                 Symbols* currentCommand = new Symbols(previous, new Command(commandArray), flag);
